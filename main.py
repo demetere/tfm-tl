@@ -3,15 +3,27 @@ import sys
 if 'SUMO_HOME' in os.environ:
     sys.path.append(os.path.join(os.environ['SUMO_HOME'], 'tools'))
 import traci
-# import libsumo as traci
 
-sumoBinary = "/usr/share/sumo/bin/sumo-gui"
-sumoCmd = [sumoBinary, "-c", "dataset/vake.sumo.cfg"]
+import matplotlib.pyplot as plt
 
-traci.start(sumoCmd)
-step = 0
-while step < 20000:
-    traci.simulationStep()
-    step += 1
+STEPS = 10000
 
-traci.close()
+if __name__ == "__main__":
+
+    sumoBinary = "/usr/share/sumo/bin/sumo"
+    sumoCmd = [sumoBinary, "-c", "dataset/vake.sumo.cfg"]
+
+    traci.start(sumoCmd)
+    step = 0
+
+    car_lengths  = []
+    while step < STEPS:
+        traci.simulationStep()
+        step += 1
+        car_lengths.append(len(traci.vehicle.getIDList()))
+
+    traci.close()
+
+    time = [i for i in range(STEPS)]
+    plt.plot(time, car_lengths)
+    plt.show()
